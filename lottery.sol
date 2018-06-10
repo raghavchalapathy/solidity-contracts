@@ -14,11 +14,11 @@ contract Lottery{
       players.push(msg.sender);  
     }
     
-    function random() private view returns (uint256) {
+    function random() private view  returns (uint256) {
       return uint256(sha3(block.difficulty,now,players));
     }
     
-    function pickWinner() public {
+    function pickWinner() restricted public {
         require(msg.sender == manager);
         uint256 index = random() % players.length;
         //this refers to the current contract
@@ -26,6 +26,14 @@ contract Lottery{
         players = new address[](0); // reset the lottery we want to create an dynamic array of initial size of 0 length of array is 0        
     }
     
+    function getPlayers() public view returns (address[]){
+        return players;
+    }
+    
+    modifier restricted() { // only manager can call
+        require(msg.sender==manager);
+        _; // early validation logic
+    }
     
 
 }
